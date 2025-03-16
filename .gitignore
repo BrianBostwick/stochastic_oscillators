@@ -14,3 +14,7 @@ data/**/*.metadata.txt
 # Ignore any scan files
 data/**/scan*.txt
 
+# Same for plots 
+plots/
+plots/**/*.png
+plots/**/*.jpeg
