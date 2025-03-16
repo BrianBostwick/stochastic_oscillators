@@ -1,0 +1,16 @@
+# Ignore all files inside the data/ directory
+data/
+
+# If you want to keep the directory but not the files, ignore everything inside it
+data/*
+
+# Ignore only .txt and .csv files in data/
+data/**/*.txt
+data/**/*.csv
+
+# Ignore metadata files
+data/**/*.metadata.txt
+
+# Ignore any scan files
+data/**/scan*.txt
+
