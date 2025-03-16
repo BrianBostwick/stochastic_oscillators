@@ -5,7 +5,7 @@
 
 #define G 9.81     // Gravitational acceleration (m/s^2)
 #define L 1.0      // Length of pendulum (m)
-#define T_MAX 20.0 // Maximum simulation time
+#define T_MAX 30.0 // Maximum simulation time
 #define DT 0.01    // Time step
 
 // Structure to store state variables
@@ -73,7 +73,7 @@ void simulate_pendulum(double gamma, double amplitude_input, int num_kicks_input
 
     initialize_kicks();
 
-    State s = { M_PI/1.1, 0.0 }; // Initial angle slightly off 180 degrees, initial angular velocity = 0
+    State s = { M_PI/1.0, 0.0 }; // Initial angle slightly off 180 degrees, initial angular velocity = 0
     double t = 0.0;
 
     for (int i = 0; i < num_steps; i++) {

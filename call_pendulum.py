@@ -18,6 +18,21 @@ lib.simulate_pendulum.argtypes = [
     ctypes.c_int      # num_steps
 ]
 
+
+# Create a timestamped directory under 'data/YYYY-MM-DD/'
+def create_plots_directory():
+    date_folder = datetime.datetime.now().strftime("%Y-%m-%d")  # e.g., "2025-03-14"
+    base_dir = "plots"
+    plots_dir = os.path.join(base_dir, date_folder)
+    os.makedirs(plots_dir, exist_ok=True)  # Create the directory if it doesn't exist
+    return plots_dir
+
+# Create a timestamped filename for plots
+def generate_plot_filename(plots_dir, scan_number, prefix, extension = "png"):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") # e.g., 2024-03-14_15-30-00
+    filename = f"{plots_dir}/scan{scan_number}_{prefix}_{timestamp}.{extension}"
+    return filename
+
 # Create a timestamped directory under 'data/YYYY-MM-DD/'
 def create_data_directory():
     date_folder = datetime.datetime.now().strftime("%Y-%m-%d")  # e.g., "2025-03-14"
@@ -51,9 +66,9 @@ def get_unique_filename(data_dir, scan_number, prefix, extension):
 data_dir = create_data_directory()
 
 # Simulation parameters
-gamma_values = [0.1, 1.0]  # Damping values
-amplitude_values = [1.0, 10.0,]  # Kick amplitudes
-num_kicks_values = [100, 0]  # Number of kicks
+gamma_values = [1.0, 10.0, 100.0]  # Damping values
+amplitude_values = [10.0, 50.0, 100.0]  # Kick amplitudes
+num_kicks_values = [100020, 100000, 10000000]  # Number of kicks
 num_steps = int(30.0 / 0.01)  # 20s simulation with dt=0.01
 
 # Allocate memory for output
@@ -135,6 +150,11 @@ for i, gamma in enumerate(gamma_values):
         ax.grid()
 
 # Adjust layout for better appearance
+data_filename = get_unique_filename(data_dir, scan_number, f"run{run_index}_pendulum_data", "txt")
 plt.suptitle("Nonlinear Pendulum with Stochastic Kicks", fontsize=16)
 plt.tight_layout(rect=[0, 0, 1, 0.97])
+
+plots_dir = create_plots_directory()
+prefix_plots  = "kicked_pendulum"
+plt.savefig(generate_plot_filename(plots_dir, scan_number, prefix_plots))
 plt.show()

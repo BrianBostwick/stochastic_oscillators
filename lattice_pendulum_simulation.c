@@ -5,9 +5,9 @@
 
 #define G 9.81     // Gravitational acceleration (m/s^2)
 #define L 1.0      // Length of pendulum (m)
-#define T_MAX 30.0 // Maximum simulation time
+#define T_MAX 120.0 // Maximum simulation time
 #define DT 0.01    // Time step
-#define N 10       // Number of pendulums in the lattice
+#define N 100       // Number of pendulums in the lattice
 #define K 0.1      // Coupling strength
 
 // Structure to store state variables
@@ -104,9 +104,11 @@ void simulate_pendulums(double gamma, double amplitude_input, int num_kicks_inpu
     initialize_kicks();
 
     State lattice[N];
+    srand(time(NULL));
     for (int i = 0; i < N; i++) {
-        lattice[i].theta = M_PI / 1.0;  // Initial angle
-        lattice[i].omega = 0.0;         // Initial angular velocity
+        // Initialize the IC with a random number.
+        lattice[i].theta = ((rand() % 2) ? 1 : -1) * M_PI * (rand() % 100);  // Initial angle
+        lattice[i].omega = ((rand() % 2) ? 1 : -1) * (rand() % 100);         // Initial angular velocity
     }
 
     double t = 0.0;
