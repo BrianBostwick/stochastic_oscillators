@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import os
 import datetime
 
+from scipy.signal import welch
+
 # Create a timestamped directory under 'data/YYYY-MM-DD/'
 def create_data_directory():
     date_folder = datetime.datetime.now().strftime("%Y-%m-%d")  # e.g., "2025-03-14"
@@ -35,10 +37,10 @@ lib.simulate_pendulums.argtypes = [
 ]
 
 # Simulation parameters
-gamma = 0.5
-amplitude = 10.0
-num_kicks = 10
-num_steps = int(120.0 / 0.01)  # 30s simulation with dt=0.01
+gamma = 0.1
+amplitude = 1.0
+num_kicks = 0
+num_steps = int(60.0 / 0.01)  # 30s simulation with dt=0.01
 N = 100  # Number of pendulums in the lattice, this must mach the c code.
 
 # Allocate memory
@@ -56,7 +58,6 @@ omega = np.array(omega_out).reshape((num_steps, N))
 
 theta_wrapped = (theta + np.pi) % (2 * np.pi) - np.pi
 
-
 # # Save data
 # data_dir = create_data_directory()
 # os.makedirs("data", exist_ok=True)
@@ -66,7 +67,6 @@ theta_wrapped = (theta + np.pi) % (2 * np.pi) - np.pi
 #             header="Time (s) " + " ".join([f"Theta_{i}" for i in range(N)]) + " " + " ".join([f"Omega_{i}" for i in range(N)]),
 #             fmt="%.6f")
 # print(f"Simulation data saved to {data_filename}")
-
 
 # Plot results
 fig, ax = plt.subplots(2, 1, figsize=(10, 8))
@@ -92,6 +92,32 @@ ax[1].set_title("Angular Velocity of Coupled Pendulums")
 plt.tight_layout()
 plt.show()
 
+fs = 1 / (t[1] - t[0])  # Sampling frequency
+# Plot the PSD
+plt.figure(figsize=(8, 5))
 
-plt.hist(theta[1,:])
+for i in range(N):
+    # Compute PSD for the first pendulum (index 0)
+    f, psd = welch(theta[:, i], fs=fs, nperseg=1024)
+
+    plt.loglog(f, psd, label="Pendulum 1")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Power Spectral Density")
+    plt.title("Power Spectral Density of Kicked Pendulum")
+    plt.grid()
+    
+plt.show()
+
+
+theta_avg = np.mean(theta, axis=1)  # Compute average displacement
+
+f, psd_avg = welch(theta_avg, fs=fs, nperseg=1024)
+
+plt.figure(figsize=(8, 6))
+plt.loglog(f, psd_avg, label="Average Motion")
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Power Spectral Density")
+plt.title("PSD of Mean Motion of the Lattice")
+plt.grid()
+plt.legend()
 plt.show()
